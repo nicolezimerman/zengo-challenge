@@ -4,11 +4,12 @@ import Container from "@material-ui/core/Container";
 import Item from "../../components/Item";
 import Switch from "@material-ui/core/Switch";
 import axios from 'axios';
-import { ORDER } from "../../interfaces/interfaces";
+import { CoinsInfo, ORDER } from "../../interfaces/interfaces";
+import Loader from "../../components/Loader";
 
 const useStyles = makeStyles({
   root: {
-    backgroundColor: "#ededed",
+    backgroundColor: "#f9f9f9",
     minHeight: "100vh",
   },
   container: {
@@ -17,12 +18,16 @@ const useStyles = makeStyles({
     justifyContent: "flex-start",
     alignItems: "center",
   },
+  title:{
+    color: "rgb(197, 42, 197, 100)",
+  }
 });
 
 const List : FunctionComponent= () =>  {
-  const {container, root} = useStyles();
-  const [coinsList, setCoinsList] = useState<Object | null>(null);
+  const {container, root, title} = useStyles();
+  const [coinsList, setCoinsList] = useState<Array<CoinsInfo> | null>(null);
   const [orderBy, setOrderBy] = useState<ORDER | null>(ORDER.NAME);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(()=>{
     const getCurrencies = async() => {
@@ -32,8 +37,15 @@ const List : FunctionComponent= () =>  {
           url,
           method: 'GET',
         })
-        setCoinsList(data.DISPLAY);
-        //return data;
+        const resp: Array<CoinsInfo> = Object.values(data.RAW).map((currency:any) => currency.USD).map((coin:any) => ({
+          name: coin["FROMSYMBOL"],
+          image: `https://www.cryptocompare.com${coin["IMAGEURL"]}`,
+          value: coin["PRICE"],
+          change24hour: coin["CHANGE24HOUR"],
+          pinned: false,
+        }));
+        setCoinsList(resp);
+        setIsLoading(false)
       } catch (err) {
         throw err
       }
@@ -42,13 +54,15 @@ const List : FunctionComponent= () =>  {
   },[])
 
   const toggleOrderBy = () =>{
-    setOrderBy(()=> orderBy == ORDER.NAME ? ORDER.VALUE : ORDER.NAME)
+    setOrderBy(()=> orderBy === ORDER.NAME ? ORDER.VALUE : ORDER.NAME)
   }
 
   return (
     <div className={root}>
       <Container className={container} maxWidth={"sm"}>
-        <h1>Cryptocurrency coins</h1>
+        <h1 className={title}>Cryptocurrency coins</h1>
+        {isLoading ? <Loader /> :
+        <>
         <Switch
           defaultChecked
           color="default"
@@ -56,15 +70,14 @@ const List : FunctionComponent= () =>  {
           onChange={toggleOrderBy}
         />
         <div>Order by: {orderBy}</div>
-          <Item name={"ETH"} value={3.25} image={"https://www.cryptocompare.com/media/37746238/eth.png"}/>
-          <Item name={"BTC"} value={321.2} image={"https://www.cryptocompare.com/media/37746251/btc.png"}/>
-          <Item name={"ETC"} value={423423.4} image={"https://www.cryptocompare.com/media/37746862/etc.png"}/>
-          <Item name={"ADA"} value={43.25} image={"https://www.cryptocompare.com/media/37746235/ada.png"}/>
-          <Item name={"XRP"} value={0.4325} image={"https://www.cryptocompare.com/media/38553096/xrp.png"}/>
+        {coinsList != null && coinsList.map(({name, value, image, pinned})=>{
+          return <Item name={name} value={value} image={image} />
+        })}
+        </>
+      }
       </Container>
     </div>
   );
 }
-
 
 export default List;
