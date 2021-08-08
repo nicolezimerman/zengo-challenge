@@ -1,56 +1,125 @@
-import {FunctionComponent} from "react";
+import { FunctionComponent } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import Typography from "@material-ui/core/Typography";
+import Tooltip from "@material-ui/core/Tooltip";
 import BookmarkIcon from "@material-ui/icons/Bookmark";
 import BookmarkBorderIcon from "@material-ui/icons/BookmarkBorder";
+import TrendingUpIcon from "@material-ui/icons/TrendingUp";
+import TrendingDownIcon from "@material-ui/icons/TrendingDown";
 import { CoinsInfo } from "../../interfaces/interfaces";
-import {Link, BrowserRouterProps} from "react-router-dom"
+import { BrowserRouterProps, useHistory } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
     margin: "5px",
-    padding: "10px",
-    width: "450px",
-    borderRadius: "15px"
-  },
-  imageIcon: {
-    width: "50px",
-  },
-  header: {
+    padding: "0px 10px",
+    minWidth: "350px",
+    backgroundColor: "#ffffff",
+    color: "#222626",
+    borderBottom: '1px solid #B7CBCB',
     display: "flex",
     flexDirection: "row",
-    justifyContent: "flex-start",
     alignItems: "center",
   },
-  currency: {
-    color: "#bababa",
-    fontSize: '1rem'
+  imageIcon: {
+    width: "40px",
   },
-  icon:{
-    color: "#bababa",
-    cursor: 'pointer',
-  }
+  currency: {
+    color: "#62BEB7",
+    fontSize: "1.5rem",
+    fontWeight: 500,
+  },
+  icon: {
+    color: "#B7CBCB",
+    cursor: "pointer",
+    marginLeft: "5px",
+    width: "32px",
+  },
+  title: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    width: "40%",
+  },
+  info: {
+    width: "60%",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  up: {
+    color: "#61ff61",
+  },
+  down: {
+    color: "#ff6161",
+  },
 });
 
-const Item:FunctionComponent<CoinsInfo> = ({name, image, value}: CoinsInfo) => {
-  const {root, header, imageIcon, currency, icon} = useStyles();
-  return (
-    <Card className={root}>
-      <div className={header}>
-        <img
-          className={imageIcon}
-          src={image}
-          title={name}
-        />
-        <Typography variant="h5">{name}</Typography>
-        {value}
-         <span className={currency}>USD</span>        
-          <BookmarkIcon className={icon} />
-          <Link to={`/detail/${name}`}>View more</Link>
-      </div>
-    </Card>
-  );
+interface ItemInfo {
+  coinInfo: CoinsInfo;
+  setCoinsList: Function;
+  coinsList: Array<CoinsInfo>;
+  index: number;
 }
+
+const Item: FunctionComponent<ItemInfo> = ({
+  coinInfo,
+  setCoinsList,
+  coinsList,
+  index,
+}: ItemInfo) => {
+  const { root, imageIcon, currency, icon, title, info, up, down } =
+    useStyles();
+  const { name, image, value, pinned, changePct24hour } = coinInfo;
+  let history = useHistory();
+
+  const goToDetail = () => {
+    history.push(`/detail/${name}`);
+  };
+
+  const togglePinned = () => {
+    const newCoinsList: Array<CoinsInfo> = [...coinsList];
+    const itemToUpdate = newCoinsList[index];
+
+    if (itemToUpdate !== undefined) {
+      itemToUpdate.pinned = !itemToUpdate.pinned;
+      newCoinsList[index] = itemToUpdate;
+      setCoinsList(newCoinsList);
+    }
+  };
+
+  return (
+    <div className={root}>
+        <section className={title}>
+          <img className={imageIcon} src={image} title={name} />
+          <h2>{name}</h2>
+        </section>
+        <section className={info}>
+          <section>
+            <span>
+              {changePct24hour > 0 ? (
+                <TrendingUpIcon className={up} />
+              ) : (
+                <TrendingDownIcon className={down} />
+              )}
+            </span>
+            <span className={currency}>${value}</span>
+          </section>
+          {pinned ? (
+            <Tooltip title={`Unpin from the top`}>
+              <BookmarkIcon className={icon} onClick={() => togglePinned()} />
+            </Tooltip>
+          ) : (
+            <Tooltip title={`Pin to the top`}>
+              <BookmarkBorderIcon
+                className={icon}
+                onClick={() => togglePinned()}
+              />
+            </Tooltip>
+          )}
+        </section>
+    </div>
+  );
+};
 
 export default Item;

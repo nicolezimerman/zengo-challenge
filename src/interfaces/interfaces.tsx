@@ -2,8 +2,8 @@ export interface CoinsInfo {
   name: string;
   image: string;
   value: number;
-  change24hour?: number,
-  pinned?: boolean;
+  changePct24hour: number,
+  pinned: boolean;
   creationDate?: Date;
   blocksNumber?: number;
 }
@@ -13,6 +13,10 @@ export enum ORDER{
   NAME = "name"
 }
 
+export enum OPTDAYS{
+  WEEK = 7,
+  MONTH = 30,
+}
 export enum COINS{
   BTC = "BTC",
   ETC = "ETC",
@@ -20,4 +24,5 @@ export enum COINS{
   XRP = "XRP",
   ADA = "ADA",
   LTC = "LTC",
+  TFUEL = "TFUEL",
 }
