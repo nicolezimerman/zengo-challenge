@@ -53,6 +53,9 @@ const useStyles = makeStyles({
   down: {
     color: "#ff6161",
   },
+  clickable:{
+    cursor: 'pointer',
+  }
 });
 
 interface ItemInfo {
@@ -68,9 +71,9 @@ const Item: FunctionComponent<ItemInfo> = ({
   coinsList,
   index,
 }: ItemInfo) => {
-  const { root, imageIcon, currency, icon, title, info, up, down } =
+  const { root, imageIcon, currency, clickable, icon, title, info, up, down } =
     useStyles();
-  const { name, image, value, pinned, changePct24hour } = coinInfo;
+  const { name, image, price, pinned, changePct24hour } = coinInfo;
   let history = useHistory();
 
   const goToDetail = () => {
@@ -90,20 +93,20 @@ const Item: FunctionComponent<ItemInfo> = ({
 
   return (
     <div className={root}>
-        <section className={title}>
+        <section className={`${title} ${clickable}`} onClick={goToDetail}>
           <img className={imageIcon} src={image} title={name} />
           <h2>{name}</h2>
         </section>
         <section className={info}>
-          <section>
+          <section className={clickable} onClick={goToDetail}>
             <span>
-              {changePct24hour > 0 ? (
+              {(changePct24hour !== undefined && changePct24hour > 0) ? (
                 <TrendingUpIcon className={up} />
               ) : (
                 <TrendingDownIcon className={down} />
               )}
             </span>
-            <span className={currency}>${value}</span>
+            <span className={currency}>${price}</span>
           </section>
           {pinned ? (
             <Tooltip title={`Unpin from the top`}>
