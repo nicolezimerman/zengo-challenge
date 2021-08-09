@@ -77,7 +77,7 @@ const Item: FunctionComponent<ItemInfo> = ({
   let history = useHistory();
 
   const goToDetail = () => {
-    history.push(`/detail/${name}`);
+    history.push(`/zengo-challenge/detail/${name}`);
   };
 
   const togglePinned = () => {

@@ -81,8 +81,6 @@ interface Coin {
   coin: string;
 }
 
-//desestructurar coin
-//const Detail: FunctionComponent<CoinsInfo> = (coin: CoinsInfo) => {
 const Detail: FunctionComponent = () => {
   const { coin }: Coin = useParams();
 
@@ -108,13 +106,6 @@ const Detail: FunctionComponent = () => {
   const [coinData, setCoinData] = useState<CoinDetailInfo>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const image = "https://www.cryptocompare.com/media/37746251/btc.png";
-  const name = "BTC";
-  const price = 4564;
-  const creationDate = 268101000;
-  const changePct24hour = 1.2;
-  const activeBlocks = 4558;
-
   useEffect(() => {
     const getCoinInfo = async (coin: string) => {
       const data = await getSingleItem(coin);
@@ -139,11 +130,6 @@ const Detail: FunctionComponent = () => {
       numberOfDays === OPTDAYS.WEEK ? OPTDAYS.MONTH : OPTDAYS.WEEK
     );
   };
-
-  const convertDate = () => {
-    var myDate = new Date(creationDate * 1000);
-    return myDate.toLocaleDateString();
-  };
   return (
     <div className={root}>
       {isLoading ? (
@@ -153,7 +139,7 @@ const Detail: FunctionComponent = () => {
           <section className={menu}>
             <ArrowBackIosIcon
               className={backIcon}
-              onClick={() => history.push(`/`)}
+              onClick={() => history.push(`/zengo-challenge/`)}
             />
             <h3 className={menuItem}>Information </h3>
           </section>

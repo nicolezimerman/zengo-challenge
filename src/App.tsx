@@ -6,8 +6,8 @@ import Detail from "./pages/Detail";
 const App: FunctionComponent = () => {
   return (
     <Router>
-      <Route path="/" exact component={List} />
-      <Route path="/detail/:coin" component={Detail} />
+      <Route path="/zengo-challenge" exact component={List} />
+      <Route path="/zengo-challenge/detail/:coin" component={Detail} />
     </Router>
   );
 };
