@@ -46,18 +46,13 @@ const useStyles = makeStyles({
     fontWeight: 500,
     margin: 0,
   },
-  percentage: {
-    fontSize: "18px",
-    margin: 0,
-    marginTop: "-5px",
-    color: "#62BEB7",
-  },
   info: {
     fontSize: "16px",
     margin: 0,
   },
   valueData: {
     marginBottom: "10px",
+    color: "#62BEB7",
   },
   infoItem: {
     margin: "0 0 5px 0",
@@ -97,7 +92,6 @@ const Detail: FunctionComponent = () => {
     header,
     title,
     itemPrice,
-    percentage,
     info,
   } = useStyles();
 
@@ -120,12 +114,12 @@ const Detail: FunctionComponent = () => {
   }, [coin]);
 
   const toggleNumberOfDays = async() => {
-    //obtener el nuevo valor
-    const data : ChartInfo[] = await getHistoricalByTime(coin,numberOfDays);
-    setChartInfo(data);
     setNumberOfDays(() =>
       numberOfDays === OPTDAYS.WEEK ? OPTDAYS.MONTH : OPTDAYS.WEEK
     );
+    const data : ChartInfo[] = await getHistoricalByTime(coin,numberOfDays === OPTDAYS.WEEK ? OPTDAYS.MONTH : OPTDAYS.WEEK);
+    setChartInfo(data);
+    
   };
   return (
     <div className={root}>
@@ -136,7 +130,7 @@ const Detail: FunctionComponent = () => {
           <section className={menu}>
             <ArrowBackIosIcon
               className={backIcon}
-              onClick={() => history.push(`/zengo-challenge/`)}
+              onClick={() => history.push(`/`)}
             />
             <h3 className={menuItem}>Information</h3>
           </section>
@@ -152,10 +146,6 @@ const Detail: FunctionComponent = () => {
             </section>
             <section className={valueData}>
               <p className={itemPrice}>${coinData?.price}</p>
-              <p className={percentage}>
-                {coinData != undefined && coinData?.changePct24hour >= 0 && `+`}
-                {coinData?.changePct24hour}% Today
-              </p>
             </section>
             <section className={info}>
               <p className={infoItem}>

@@ -6,7 +6,6 @@ const getHeader = () => {
   return { authorization: apiKey };
 };
 
-//OK
 async function getItems(coinsOptions: Array<string>) {
   const options = coinsOptions.join();
   const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${options}&tsyms=USD`;
@@ -31,11 +30,9 @@ async function getItems(coinsOptions: Array<string>) {
   }
 }
 
-//OKI - CHEQUEAR DATOS
 async function getSingleItem(coin: string) {
   const data = await getBlockInformation(coin);
   const { CoinInfo, Price } = data[coin];
-  //ver si agrego mas info (el porcentaje de 24hs)
   const resp: CoinDetailInfo = {
     name: CoinInfo["Name"],
     fullName: CoinInfo["FullName"],
@@ -43,12 +40,10 @@ async function getSingleItem(coin: string) {
     price: Price["USD"],
     creationDate: CoinInfo["AssetLaunchDate"],
     blocksNumber: CoinInfo["BlockNumber"],
-    changePct24hour: 1.2,
   };
   return resp;
 }
 
-//OKI
 async function getBlockInformation(coin: string) {
   const url = `https://min-api.cryptocompare.com/data/blockchain/mining/calculator?fsyms=${coin}&tsyms=USD`;
   try {
@@ -71,7 +66,6 @@ async function getHistoricalByTime(coin: string, numberOfDays: number) {
       method: "GET",
       headers: getHeader(),
     });
-    debugger;
     const info: any = data.Data.Data;
 
     const resp: Array<ChartInfo> = Object.values(info)
@@ -79,7 +73,6 @@ async function getHistoricalByTime(coin: string, numberOfDays: number) {
         date: convertDate(date["time"]),
         price: date["close"],
       }));
-    debugger
     return resp;
   } catch (err) {
     throw err;

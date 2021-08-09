@@ -11,7 +11,6 @@ export interface CoinDetailInfo {
   fullName: string; 
   image: string; 
   price: number; 
-  changePct24hour: number; //ver por que no esta en la otra
   creationDate: Date; 
   blocksNumber: number;
 }
