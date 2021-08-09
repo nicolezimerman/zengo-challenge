@@ -1,12 +1,13 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
-import { CoinDetailInfo, OPTDAYS } from "../../interfaces/interfaces";
+import { CoinDetailInfo, OPTDAYS, ChartInfo } from "../../interfaces/interfaces";
 import { makeStyles } from "@material-ui/core/styles";
 import Switch from "@material-ui/core/Switch";
 import Tooltip from "@material-ui/core/Tooltip";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import { useHistory, useParams } from "react-router-dom";
-import { getSingleItem } from "../../services/apis/Items";
+import { getSingleItem, getHistoricalByTime } from "../../services/apis/Items";
 import Loader from "../../components/Loader";
+import Chart from "../../components/Chart";
 
 const useStyles = makeStyles({
   root: {
@@ -99,33 +100,29 @@ const Detail: FunctionComponent = () => {
     percentage,
     info,
   } = useStyles();
-  const [valuePastDays, setValuePastDays] = useState<number>(3124);
-  const [numberOfDays, setNumberOfDays] = useState<OPTDAYS>(OPTDAYS.WEEK);
+
   let history = useHistory();
 
   const [coinData, setCoinData] = useState<CoinDetailInfo>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [chartInfo, setChartInfo] = useState<ChartInfo[]>([]);
+  const [numberOfDays, setNumberOfDays] = useState<OPTDAYS>(OPTDAYS.WEEK);
 
   useEffect(() => {
     const getCoinInfo = async (coin: string) => {
-      const data = await getSingleItem(coin);
-      const { CoinInfo, Price } = data[coin];
-      const resp: CoinDetailInfo = {
-        name: CoinInfo["Name"],
-        fullName: CoinInfo["FullName"],
-        image: `https://www.cryptocompare.com${CoinInfo["ImageUrl"]}`,
-        price: Price["USD"],
-        creationDate: CoinInfo["AssetLaunchDate"],
-        blocksNumber: CoinInfo["BlockNumber"],
-        changePct24hour: 1.2,
-      };
+      const resp: CoinDetailInfo = await getSingleItem(coin);
+      const data : ChartInfo[] = await getHistoricalByTime(coin,numberOfDays);
       setCoinData(resp);
+      setChartInfo(data);
       setIsLoading(false);
     };
     getCoinInfo(coin);
   }, [coin]);
-  const toggleNumberOfDays = () => {
+
+  const toggleNumberOfDays = async() => {
     //obtener el nuevo valor
+    const data : ChartInfo[] = await getHistoricalByTime(coin,numberOfDays);
+    setChartInfo(data);
     setNumberOfDays(() =>
       numberOfDays === OPTDAYS.WEEK ? OPTDAYS.MONTH : OPTDAYS.WEEK
     );
@@ -141,7 +138,7 @@ const Detail: FunctionComponent = () => {
               className={backIcon}
               onClick={() => history.push(`/zengo-challenge/`)}
             />
-            <h3 className={menuItem}>Information </h3>
+            <h3 className={menuItem}>Information</h3>
           </section>
           <section className={container}>
             <section className={header}>
@@ -168,8 +165,7 @@ const Detail: FunctionComponent = () => {
                 Active blocks: {coinData?.blocksNumber}
               </p>
               <p className={infoItem}>
-                Value from {numberOfDays} past days: {valuePastDays}{" "}
-              </p>
+                Value from {numberOfDays} past days:
               <Tooltip
                 title={`Switch to past ${
                   numberOfDays === OPTDAYS.WEEK ? OPTDAYS.MONTH : OPTDAYS.WEEK
@@ -182,6 +178,8 @@ const Detail: FunctionComponent = () => {
                   onChange={toggleNumberOfDays}
                 />
               </Tooltip>
+              </p>
+              <Chart chartInfo={chartInfo} />
             </section>
           </section>
         </>

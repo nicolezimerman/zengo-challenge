@@ -6,7 +6,7 @@ import BookmarkBorderIcon from "@material-ui/icons/BookmarkBorder";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 import TrendingDownIcon from "@material-ui/icons/TrendingDown";
 import { CoinsInfo } from "../../interfaces/interfaces";
-import { BrowserRouterProps, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {

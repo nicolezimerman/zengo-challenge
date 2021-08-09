@@ -6,7 +6,7 @@ import Switch from "@material-ui/core/Switch";
 import { CoinsInfo, ORDER } from "../../interfaces/interfaces";
 import Loader from "../../components/Loader";
 import Grid from "@material-ui/core/Grid";
-import getItems from "../../services/apis/Items";
+import {getItems} from "../../services/apis/Items";
 
 const useStyles = makeStyles({
   root: {
@@ -33,18 +33,9 @@ const List: FunctionComponent = () => {
 
   useEffect(() => {
     const getCurrencies = async () => {
-      const data = await getItems(coinsOptions);
-        const resp: Array<CoinsInfo> = Object.values(data.RAW)
-          .map((currency: any) => currency.USD)
-          .map((coin: any) => ({
-            name: coin["FROMSYMBOL"],
-            image: `https://www.cryptocompare.com${coin["IMAGEURL"]}`,
-            price: coin["PRICE"],
-            changePct24hour: coin["CHANGEPCT24HOUR"],
-            pinned: false,
-          }));
-        setCoinsList(resp);
-        setIsLoading(false);
+      const resp: Array<CoinsInfo> = await getItems(coinsOptions);
+      setCoinsList(resp);
+      setIsLoading(false);
     };
     getCurrencies();
   }, []);

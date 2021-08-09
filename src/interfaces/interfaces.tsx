@@ -15,6 +15,12 @@ export interface CoinDetailInfo {
   creationDate: Date; 
   blocksNumber: number;
 }
+
+export interface ChartInfo {
+  date: string;
+  price: number;
+}
+
 export enum STATUS {
   LOADING = "loading",
   COMPLETE = "complete",
